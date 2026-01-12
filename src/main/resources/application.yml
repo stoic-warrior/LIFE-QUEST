@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: lifequest
+  datasource:
+    url: jdbc:postgresql://localhost:5432/lifequest
+    username: lifequest
+    password: lifequest
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        format_sql: true
+  data:
+    redis:
+      host: localhost
+      port: 6379
+
+jwt:
+  secret: "bGlmZXF1ZXN0LXNlY3JldC1rZXktY2hhbmdlLW1lLWxvbmc="
+  access-token-expiry-minutes: 15
+  refresh-token-expiry-days: 7
+
+logging:
+  level:
+    org.hibernate.SQL: debug

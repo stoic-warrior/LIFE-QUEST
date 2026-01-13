@@ -76,6 +76,15 @@ public class User {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
     private UserStats stats;
 
+    public static User create(String email, String nickname, String encodedPassword, UUID uuid) {
+        User user = new User();
+        user.email = email;
+        user.nickname = nickname;
+        user.password = encodedPassword;
+        user.uuid = uuid;
+        return user;
+    }
+
     public void initializeStats(UserStats stats) {
         this.stats = stats;
         stats.setUser(this);

@@ -44,6 +44,10 @@ public class UserStats {
     @Column(nullable = false)
     private int spiritual = 1;
 
+    public static UserStats create() {
+        return new UserStats();
+    }
+
     public void addStat(StatType statType, int amount) {
         switch (statType) {
             case STRENGTH -> strength += amount;

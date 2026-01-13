@@ -47,4 +47,13 @@ public class UserQuest {
     private Integer xpEarned;
 
     private Integer goldEarned;
+
+    public static UserQuest create(User user, Quest quest, QuestStatus status, LocalDateTime acceptedAt) {
+        UserQuest userQuest = new UserQuest();
+        userQuest.user = user;
+        userQuest.quest = quest;
+        userQuest.status = status;
+        userQuest.acceptedAt = acceptedAt;
+        return userQuest;
+    }
 }

@@ -46,12 +46,13 @@ public class AuthService {
         if (userRepository.existsByNickname(request.getNickname())) {
             throw new ApiException(ErrorCode.INVALID_INPUT, "Nickname already exists");
         }
-        User user = new User();
-        user.setEmail(request.getEmail());
-        user.setNickname(request.getNickname());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setUuid(UUID.randomUUID());
-        user.initializeStats(new UserStats());
+        User user = User.create(
+            request.getEmail(),
+            request.getNickname(),
+            passwordEncoder.encode(request.getPassword()),
+            UUID.randomUUID()
+        );
+        user.initializeStats(UserStats.create());
         User saved = userRepository.save(user);
         return issueTokens(saved);
     }

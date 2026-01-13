@@ -47,17 +47,18 @@ public class QuestService {
     @Transactional
     public Quest create(Long userId, QuestCreateRequest request) {
         User creator = userService.getUser(userId);
-        Quest quest = new Quest();
-        quest.setTitle(request.getTitle());
-        quest.setDescription(request.getDescription());
-        quest.setType(request.getType());
-        quest.setDifficulty(request.getDifficulty());
-        quest.setBaseXp(request.getBaseXp());
-        quest.setGoldReward(request.getGoldReward());
-        quest.setTargetStat(request.getTargetStat());
-        quest.setRepeatable(request.isRepeatable());
-        quest.setActive(true);
-        quest.setCreator(creator);
+        Quest quest = Quest.create(
+            request.getTitle(),
+            request.getDescription(),
+            request.getType(),
+            request.getDifficulty(),
+            request.getBaseXp(),
+            request.getGoldReward(),
+            request.getTargetStat(),
+            request.isRepeatable(),
+            true,
+            creator
+        );
         return questRepository.save(quest);
     }
 
@@ -67,11 +68,12 @@ public class QuestService {
         Quest quest = get(questId);
         return userQuestRepository.findByUserIdAndQuestId(userId, questId)
             .orElseGet(() -> {
-                UserQuest userQuest = new UserQuest();
-                userQuest.setUser(user);
-                userQuest.setQuest(quest);
-                userQuest.setStatus(QuestStatus.IN_PROGRESS);
-                userQuest.setAcceptedAt(LocalDateTime.now());
+                UserQuest userQuest = UserQuest.create(
+                    user,
+                    quest,
+                    QuestStatus.IN_PROGRESS,
+                    LocalDateTime.now()
+                );
                 return userQuestRepository.save(userQuest);
             });
     }

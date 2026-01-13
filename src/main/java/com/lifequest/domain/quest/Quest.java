@@ -61,4 +61,28 @@ public class Quest {
     private User creator;
 
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    public static Quest create(String title,
+                               String description,
+                               QuestType type,
+                               int difficulty,
+                               int baseXp,
+                               int goldReward,
+                               StatType targetStat,
+                               boolean repeatable,
+                               boolean active,
+                               User creator) {
+        Quest quest = new Quest();
+        quest.title = title;
+        quest.description = description;
+        quest.type = type;
+        quest.difficulty = difficulty;
+        quest.baseXp = baseXp;
+        quest.goldReward = goldReward;
+        quest.targetStat = targetStat;
+        quest.repeatable = repeatable;
+        quest.active = active;
+        quest.creator = creator;
+        return quest;
+    }
 }

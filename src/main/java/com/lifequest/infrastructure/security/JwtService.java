@@ -5,16 +5,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import java.security.Key;
 import java.time.Instant;
 import java.util.Date;
 import java.util.Map;
+import javax.crypto.SecretKey;
 import org.springframework.stereotype.Service;
 
 @Service
 public class JwtService {
     private final JwtProperties properties;
-    private final Key signingKey;
+    private final SecretKey signingKey;
 
     public JwtService(JwtProperties properties) {
         this.properties = properties;

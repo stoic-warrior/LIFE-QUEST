@@ -151,6 +151,7 @@ public class QuestService {
             long required = requiredXp(user.getLevel());
             user.setCurrentXp(user.getCurrentXp() - required);
             user.setLevel(user.getLevel() + 1);
+            user.setStatPoints(user.getStatPoints() + 3);
             leveledUp = true;
         }
         return leveledUp;

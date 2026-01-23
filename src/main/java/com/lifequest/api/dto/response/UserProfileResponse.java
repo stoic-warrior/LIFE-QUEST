@@ -15,6 +15,7 @@ public class UserProfileResponse {
     private final long currentXp;
     private final long totalXp;
     private final long gold;
+    private final int statPoints;
     private final int streakDays;
 
     public static UserProfileResponse from(User user) {
@@ -26,6 +27,7 @@ public class UserProfileResponse {
             .currentXp(user.getCurrentXp())
             .totalXp(user.getTotalXp())
             .gold(user.getGold())
+            .statPoints(user.getStatPoints())
             .streakDays(user.getStreakDays())
             .build();
     }

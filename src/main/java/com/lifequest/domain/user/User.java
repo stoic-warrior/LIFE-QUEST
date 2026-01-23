@@ -57,6 +57,9 @@ public class User {
     private long gold = 0;
 
     @Column(nullable = false)
+    private int statPoints = 0;
+
+    @Column(nullable = false)
     private int streakDays = 0;
 
     private LocalDate lastLoginDate;

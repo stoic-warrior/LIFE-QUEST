@@ -2,13 +2,12 @@ package com.lifequest.api.controller;
 
 import com.lifequest.api.dto.request.QuestCreateRequest;
 import com.lifequest.api.dto.response.ApiResponse;
-import com.lifequest.api.dto.response.QuestCompletionResponse;
+import com.lifequest.api.dto.response.QuestCompleteResponse;
 import com.lifequest.api.dto.response.QuestResponse;
 import com.lifequest.application.service.QuestService;
-import com.lifequest.domain.quest.QuestType;
 import jakarta.validation.Valid;
 import java.util.List;
-import org.springframework.http.ResponseEntity;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,55 +20,45 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/v1/quests")
+@RequiredArgsConstructor
 public class QuestController {
+
     private final QuestService questService;
 
-    public QuestController(QuestService questService) {
-        this.questService = questService;
-    }
-
     @GetMapping
-    public ResponseEntity<ApiResponse<List<QuestResponse>>> list(@RequestParam(required = false) QuestType type) {
-        List<QuestResponse> quests = questService.list(type).stream()
-            .map(QuestResponse::from)
-            .toList();
-        return ResponseEntity.ok(ApiResponse.success(quests));
-    }
-
-    @GetMapping("/{id}")
-    public ResponseEntity<ApiResponse<QuestResponse>> detail(@PathVariable Long id) {
-        return ResponseEntity.ok(ApiResponse.success(QuestResponse.from(questService.get(id))));
+    public ApiResponse<List<QuestResponse>> getQuests(
+            Authentication authentication,
+            @RequestParam(required = false) String status
+    ) {
+        Long userId = (Long) authentication.getPrincipal();
+        return ApiResponse.success(questService.getQuests(userId, status));
     }
 
     @PostMapping
-    public ResponseEntity<ApiResponse<QuestResponse>> create(
-        Authentication authentication,
-        @Valid @RequestBody QuestCreateRequest request
+    public ApiResponse<QuestResponse> createQuest(
+            Authentication authentication,
+            @Valid @RequestBody QuestCreateRequest request
     ) {
         Long userId = (Long) authentication.getPrincipal();
-        return ResponseEntity.ok(ApiResponse.success(QuestResponse.from(questService.create(userId, request))));
-    }
-
-    @PostMapping("/{id}/accept")
-    public ResponseEntity<ApiResponse<Object>> accept(Authentication authentication, @PathVariable Long id) {
-        Long userId = (Long) authentication.getPrincipal();
-        questService.accept(userId, id);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        return ApiResponse.success(questService.createQuest(userId, request));
     }
 
     @PostMapping("/{id}/complete")
-    public ResponseEntity<ApiResponse<QuestCompletionResponse>> complete(
-        Authentication authentication,
-        @PathVariable Long id
+    public ApiResponse<QuestCompleteResponse> completeQuest(
+            Authentication authentication,
+            @PathVariable Long id
     ) {
         Long userId = (Long) authentication.getPrincipal();
-        return ResponseEntity.ok(ApiResponse.success(questService.complete(userId, id)));
+        return ApiResponse.success(questService.completeQuest(userId, id));
     }
 
-    @DeleteMapping("/{id}/abandon")
-    public ResponseEntity<ApiResponse<Object>> abandon(Authentication authentication, @PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ApiResponse<Void> deleteQuest(
+            Authentication authentication,
+            @PathVariable Long id
+    ) {
         Long userId = (Long) authentication.getPrincipal();
-        questService.abandon(userId, id);
-        return ResponseEntity.ok(ApiResponse.success(null));
+        questService.deleteQuest(userId, id);
+        return ApiResponse.success(null);
     }
 }

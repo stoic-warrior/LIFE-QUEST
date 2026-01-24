@@ -1,9 +1,7 @@
 package com.lifequest.domain.quest;
 
 public enum QuestStatus {
-    ACCEPTED,
-    IN_PROGRESS,
+    PENDING,
     COMPLETED,
-    FAILED,
-    ABANDONED
+    FAILED
 }

@@ -35,9 +35,22 @@ public class UserItem {
     private Item item;
 
     @Column(nullable = false)
-    private int quantity = 1;
+    private boolean equipped = false;
 
-    private LocalDateTime acquiredAt = LocalDateTime.now();
+    private LocalDateTime obtainedAt = LocalDateTime.now();
 
-    private LocalDateTime expiresAt;
+    public static UserItem create(User user, Item item) {
+        UserItem userItem = new UserItem();
+        userItem.user = user;
+        userItem.item = item;
+        return userItem;
+    }
+
+    public void equip() {
+        this.equipped = true;
+    }
+
+    public void unequip() {
+        this.equipped = false;
+    }
 }

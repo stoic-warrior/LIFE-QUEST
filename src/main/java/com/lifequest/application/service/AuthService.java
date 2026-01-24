@@ -7,7 +7,7 @@ import com.lifequest.api.dto.request.SignupRequest;
 import com.lifequest.api.dto.response.AuthResponse;
 import com.lifequest.domain.user.User;
 import com.lifequest.domain.user.UserRepository;
-import com.lifequest.domain.user.UserStats;
+import com.lifequest.domain.user.PlayerStats;
 import com.lifequest.infrastructure.security.JwtProperties;
 import com.lifequest.infrastructure.security.JwtService;
 import com.lifequest.infrastructure.security.RefreshTokenStore;
@@ -52,7 +52,7 @@ public class AuthService {
             passwordEncoder.encode(request.getPassword()),
             UUID.randomUUID()
         );
-        user.initializeStats(UserStats.create());
+        user.initializeStats(PlayerStats.create());
         User saved = userRepository.save(user);
         return issueTokens(saved);
     }

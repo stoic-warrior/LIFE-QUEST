@@ -8,7 +8,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import java.math.BigDecimal;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -34,11 +33,39 @@ public class Item {
     @Column(nullable = false)
     private ItemGrade grade;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private String effectType;
+    private ItemSlot slot;
 
-    @Column(nullable = false, precision = 10, scale = 2)
-    private BigDecimal effectValue;
+    @Column(nullable = false)
+    private int atkBonus = 0;
 
-    private Integer durationDays;
+    @Column(nullable = false)
+    private int defBonus = 0;
+
+    @Column(nullable = false)
+    private int crtBonus = 0;
+
+    @Column(nullable = false)
+    private int lukBonus = 0;
+
+    @Column(nullable = false)
+    private int price = 0;
+
+    private String imageUrl;
+
+    public static Item create(String name, String description, ItemGrade grade, ItemSlot slot,
+                               int atkBonus, int defBonus, int crtBonus, int lukBonus, int price) {
+        Item item = new Item();
+        item.name = name;
+        item.description = description;
+        item.grade = grade;
+        item.slot = slot;
+        item.atkBonus = atkBonus;
+        item.defBonus = defBonus;
+        item.crtBonus = crtBonus;
+        item.lukBonus = lukBonus;
+        item.price = price;
+        return item;
+    }
 }

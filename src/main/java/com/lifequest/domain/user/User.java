@@ -54,7 +54,16 @@ public class User {
     private long totalXp = 0;
 
     @Column(nullable = false)
-    private long gold = 0;
+    private long gold = 100;
+
+    @Column(nullable = false)
+    private int currentHp = 100;
+
+    @Column(nullable = false)
+    private int maxHp = 100;
+
+    @Column(nullable = false)
+    private int statPoints = 0;
 
     @Column(nullable = false)
     private int streakDays = 0;
@@ -74,7 +83,7 @@ public class User {
     private LocalDateTime updatedAt = LocalDateTime.now();
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private UserStats stats;
+    private PlayerStats stats;
 
     public static User create(String email, String nickname, String encodedPassword, UUID uuid) {
         User user = new User();
@@ -85,7 +94,7 @@ public class User {
         return user;
     }
 
-    public void initializeStats(UserStats stats) {
+    public void initializeStats(PlayerStats stats) {
         this.stats = stats;
         stats.setUser(this);
     }
@@ -93,5 +102,48 @@ public class User {
     public void addXp(long xp) {
         this.currentXp += xp;
         this.totalXp += xp;
+    }
+
+    public void addGold(long amount) {
+        this.gold += amount;
+    }
+
+    public void takeDamage(int damage) {
+        this.currentHp = Math.max(0, this.currentHp - damage);
+    }
+
+    public void heal(int amount) {
+        this.currentHp = Math.min(this.maxHp, this.currentHp + amount);
+    }
+
+    public void fullHeal() {
+        this.currentHp = this.maxHp;
+    }
+
+    public boolean isDead() {
+        return this.currentHp <= 0;
+    }
+
+    public int getRequiredXp() {
+        return (int) (100 * Math.pow(level, 1.5));
+    }
+
+    public boolean checkLevelUp() {
+        boolean leveledUp = false;
+        while (currentXp >= getRequiredXp()) {
+            currentXp -= getRequiredXp();
+            level++;
+            statPoints += 3;
+            maxHp += 10;
+            currentHp = maxHp;
+            leveledUp = true;
+        }
+        return leveledUp;
+    }
+
+    public void applyDeathPenalty() {
+        this.currentXp = (long) (this.currentXp * 0.9);
+        this.gold = (long) (this.gold * 0.8);
+        this.currentHp = this.maxHp;
     }
 }

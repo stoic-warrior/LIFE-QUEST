@@ -28,61 +28,45 @@ public class Quest {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @Column(nullable = false, length = 200)
     private String title;
 
     @Column(columnDefinition = "TEXT")
     private String description;
 
+    @Column(nullable = false)
+    private int difficulty = 1;
+
+    @Column(nullable = false)
+    private int baseDamage = 50;
+
+    private LocalDateTime deadline;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private QuestType type;
+    private QuestStatus status = QuestStatus.PENDING;
 
-    @Column(nullable = false)
-    private int difficulty;
-
-    @Column(nullable = false)
-    private int baseXp;
-
-    @Column(nullable = false)
-    private int goldReward;
-
-    @Enumerated(EnumType.STRING)
-    private StatType targetStat;
-
-    @Column(nullable = false)
-    private boolean repeatable = false;
-
-    @Column(nullable = false)
-    private boolean active = true;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "creator_id")
-    private User creator;
+    private LocalDateTime completedAt;
 
     private LocalDateTime createdAt = LocalDateTime.now();
 
-    public static Quest create(String title,
-                               String description,
-                               QuestType type,
-                               int difficulty,
-                               int baseXp,
-                               int goldReward,
-                               StatType targetStat,
-                               boolean repeatable,
-                               boolean active,
-                               User creator) {
+    public static Quest create(User user, String title, String description, int difficulty, LocalDateTime deadline) {
         Quest quest = new Quest();
+        quest.user = user;
         quest.title = title;
         quest.description = description;
-        quest.type = type;
         quest.difficulty = difficulty;
-        quest.baseXp = baseXp;
-        quest.goldReward = goldReward;
-        quest.targetStat = targetStat;
-        quest.repeatable = repeatable;
-        quest.active = active;
-        quest.creator = creator;
+        quest.baseDamage = 30 + (difficulty * 20); // 난이도별 50~130
+        quest.deadline = deadline;
         return quest;
+    }
+
+    public void complete() {
+        this.status = QuestStatus.COMPLETED;
+        this.completedAt = LocalDateTime.now();
     }
 }

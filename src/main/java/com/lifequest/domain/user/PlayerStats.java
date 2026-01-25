@@ -28,16 +28,19 @@ public class PlayerStats {
     private User user;
 
     @Column(nullable = false)
-    private int atk = 10;
+    private int atk = 10;  // 공격력
 
     @Column(nullable = false)
-    private int def = 10;
+    private int def = 10;  // 방어력
 
     @Column(nullable = false)
-    private int crt = 10;
+    private int pen = 10;  // 방어관통
 
     @Column(nullable = false)
-    private int luk = 10;
+    private int luk = 10;  // 행운
+
+    @Column(nullable = false)
+    private int statPoints = 0;  // 미사용 스탯 포인트
 
     public static PlayerStats create() {
         return new PlayerStats();
@@ -47,7 +50,7 @@ public class PlayerStats {
         switch (statType.toUpperCase()) {
             case "ATK" -> atk += amount;
             case "DEF" -> def += amount;
-            case "CRT" -> crt += amount;
+            case "PEN" -> pen += amount;
             case "LUK" -> luk += amount;
             default -> throw new IllegalArgumentException("Invalid stat type: " + statType);
         }
@@ -57,9 +60,13 @@ public class PlayerStats {
         return switch (statType.toUpperCase()) {
             case "ATK" -> atk;
             case "DEF" -> def;
-            case "CRT" -> crt;
+            case "PEN" -> pen;
             case "LUK" -> luk;
             default -> throw new IllegalArgumentException("Invalid stat type: " + statType);
         };
+    }
+
+    public void addStatPoints(int points) {
+        this.statPoints += points;
     }
 }

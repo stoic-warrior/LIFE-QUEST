@@ -42,7 +42,7 @@ public class BattleLog {
         log.userId = userId;
         log.logType = LogType.PLAYER_ATTACK;
         log.damage = damage;
-        log.description = String.format("%s에게 %d 데미지!%s", monsterName, damage, isCritical ? " (크리티컬!)" : "");
+        log.description = String.format("%s에게 %d 데미지!", monsterName, damage);
         return log;
     }
 
@@ -52,6 +52,15 @@ public class BattleLog {
         log.logType = LogType.MONSTER_ATTACK;
         log.damage = damage;
         log.description = String.format("%s의 공격! %d 데미지 (%d회)", monsterName, damage, attackCount);
+        return log;
+    }
+
+    public static BattleLog reflect(Long userId, int damage, String monsterName) {
+        BattleLog log = new BattleLog();
+        log.userId = userId;
+        log.logType = LogType.REFLECT;
+        log.damage = damage;
+        log.description = String.format("%s의 반사! %d 데미지 받음", monsterName, damage);
         return log;
     }
 
@@ -73,21 +82,21 @@ public class BattleLog {
         return log;
     }
 
+    public static BattleLog bossVictory(Long userId, String bossName, int xp, int gold) {
+        BattleLog log = new BattleLog();
+        log.userId = userId;
+        log.logType = LogType.BOSS_VICTORY;
+        log.damage = 0;
+        log.description = String.format("🏆 %s 처치! +%d XP, +%d 골드", bossName, xp, gold);
+        return log;
+    }
+
     public static BattleLog defeat(Long userId) {
         BattleLog log = new BattleLog();
         log.userId = userId;
         log.logType = LogType.DEFEAT;
         log.damage = 0;
         log.description = "쓰러졌습니다... 경험치 -10%, 골드 -20%";
-        return log;
-    }
-
-    public static BattleLog environment(Long userId, int damage, String dungeonName) {
-        BattleLog log = new BattleLog();
-        log.userId = userId;
-        log.logType = LogType.ENVIRONMENT;
-        log.damage = damage;
-        log.description = String.format("%s 환경 데미지! %d 데미지", dungeonName, damage);
         return log;
     }
 }

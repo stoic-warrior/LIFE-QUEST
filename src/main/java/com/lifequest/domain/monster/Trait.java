@@ -2,10 +2,11 @@ package com.lifequest.domain.monster;
 
 public enum Trait {
     NONE("특성 없음"),
-    CRIT_IMMUNE("크리티컬 무효"),
-    ARMOR("방어력 증가"),
-    LIFESTEAL("흡혈"),
-    ACCELERATE("공격 가속");
+    REGENERATE("시간당 HP 5% 회복"),
+    POISON("플레이어에게 시간당 피해"),
+    MIRROR("받은 데미지 20% 반사"),
+    RANDOM("플레이어 공격 데미지 50%~200% 랜덤"),
+    BOSS("도망 불가, 보상 3배");
 
     private final String description;
 

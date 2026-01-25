@@ -108,6 +108,10 @@ public class User {
         this.gold += amount;
     }
 
+    public void subtractGold(int amount) {
+        this.gold = Math.max(0, this.gold - amount);
+    }
+
     public void takeDamage(int damage) {
         this.currentHp = Math.max(0, this.currentHp - damage);
     }

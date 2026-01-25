@@ -1,8 +1,8 @@
 package com.lifequest.api.controller;
 
 import com.lifequest.api.dto.response.ApiResponse;
-import com.lifequest.api.dto.response.DungeonResponse;
-import com.lifequest.application.service.DungeonService;
+import com.lifequest.api.dto.response.HuntingGroundResponse;
+import com.lifequest.application.service.HuntingService;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -13,29 +13,29 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@RequestMapping("/api/v1/dungeons")
+@RequestMapping("/api/v1/hunting")
 @RequiredArgsConstructor
-public class DungeonController {
+public class HuntingController {
 
-    private final DungeonService dungeonService;
+    private final HuntingService huntingService;
 
-    @GetMapping
-    public ApiResponse<List<DungeonResponse>> getDungeons(Authentication authentication) {
+    @GetMapping("/grounds")
+    public ApiResponse<List<HuntingGroundResponse>> getHuntingGrounds(Authentication authentication) {
         Long userId = (Long) authentication.getPrincipal();
-        return ApiResponse.success(dungeonService.getDungeonList(userId));
+        return ApiResponse.success(huntingService.getHuntingGrounds(userId));
     }
 
-    @PostMapping("/{id}/enter")
-    public ApiResponse<Void> enterDungeon(Authentication authentication, @PathVariable Long id) {
+    @PostMapping("/grounds/{id}/enter")
+    public ApiResponse<Void> enterHuntingGround(Authentication authentication, @PathVariable Long id) {
         Long userId = (Long) authentication.getPrincipal();
-        dungeonService.enterDungeon(userId, id);
+        huntingService.enterHuntingGround(userId, id);
         return ApiResponse.success(null);
     }
 
     @PostMapping("/leave")
-    public ApiResponse<Void> leaveDungeon(Authentication authentication) {
+    public ApiResponse<Void> leaveHuntingGround(Authentication authentication) {
         Long userId = (Long) authentication.getPrincipal();
-        dungeonService.leaveDungeon(userId);
+        huntingService.leaveHuntingGround(userId);
         return ApiResponse.success(null);
     }
 }

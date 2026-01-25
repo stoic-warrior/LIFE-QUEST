@@ -15,7 +15,8 @@ public record UserProfileResponse(
         int currentHp,
         int maxHp,
         int statPoints,
-        int streakDays
+        int streakDays,
+        String role
 ) {
     public static UserProfileResponse from(User user) {
         return new UserProfileResponse(
@@ -30,7 +31,8 @@ public record UserProfileResponse(
                 user.getCurrentHp(),
                 user.getMaxHp(),
                 user.getStatPoints(),
-                user.getStreakDays()
+                user.getStreakDays(),
+                user.getRole().name()
         );
     }
 }

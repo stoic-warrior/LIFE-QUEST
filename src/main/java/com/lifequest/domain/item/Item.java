@@ -44,7 +44,7 @@ public class Item {
     private int defBonus = 0;
 
     @Column(nullable = false)
-    private int crtBonus = 0;
+    private int penBonus = 0;  // 방어관통
 
     @Column(nullable = false)
     private int lukBonus = 0;
@@ -55,7 +55,7 @@ public class Item {
     private String imageUrl;
 
     public static Item create(String name, String description, ItemGrade grade, ItemSlot slot,
-                               int atkBonus, int defBonus, int crtBonus, int lukBonus, int price) {
+                               int atkBonus, int defBonus, int penBonus, int lukBonus, int price) {
         Item item = new Item();
         item.name = name;
         item.description = description;
@@ -63,7 +63,7 @@ public class Item {
         item.slot = slot;
         item.atkBonus = atkBonus;
         item.defBonus = defBonus;
-        item.crtBonus = crtBonus;
+        item.penBonus = penBonus;
         item.lukBonus = lukBonus;
         item.price = price;
         return item;

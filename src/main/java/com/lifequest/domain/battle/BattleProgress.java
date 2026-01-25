@@ -1,5 +1,6 @@
-package com.lifequest.domain.dungeon;
+package com.lifequest.domain.battle;
 
+import com.lifequest.domain.hunting.HuntingGround;
 import com.lifequest.domain.monster.Monster;
 import com.lifequest.domain.user.User;
 import jakarta.persistence.Column;
@@ -20,11 +21,11 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "dungeon_progress")
+@Table(name = "battle_progress")
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class DungeonProgress {
+public class BattleProgress {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -33,10 +34,12 @@ public class DungeonProgress {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private User user;
 
+    // 사냥터 (사냥 중일 때)
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "dungeon_id")
-    private Dungeon dungeon;
+    @JoinColumn(name = "hunting_ground_id")
+    private HuntingGround huntingGround;
 
+    // 현재 싸우는 몬스터
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "monster_id")
     private Monster monster;
@@ -54,28 +57,54 @@ public class DungeonProgress {
 
     private LocalDateTime lastMonsterAttack;
 
-    private LocalDateTime lastEnvironmentCalc;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private BattleType battleType = BattleType.NONE;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private ProgressStatus status = ProgressStatus.IDLE;
+    private BattleStatus status = BattleStatus.IDLE;
 
-    public static DungeonProgress create(User user) {
-        DungeonProgress progress = new DungeonProgress();
-        progress.user = user;
-        return progress;
+    public static BattleProgress create(User user) {
+        BattleProgress bp = new BattleProgress();
+        bp.user = user;
+        return bp;
     }
 
-    public void startDungeon(Dungeon dungeon) {
-        this.dungeon = dungeon;
-        this.monster = dungeon.getMonster();
+    // 사냥터 입장
+    public void startHunting(HuntingGround huntingGround) {
+        this.huntingGround = huntingGround;
+        this.monster = huntingGround.getMonster();
         this.monsterCurrentHp = monster.getHp();
         this.monsterMaxHp = monster.getHp();
         this.monsterAttackCount = 0;
         this.startedAt = LocalDateTime.now();
         this.lastMonsterAttack = LocalDateTime.now();
-        this.lastEnvironmentCalc = LocalDateTime.now();
-        this.status = ProgressStatus.IN_PROGRESS;
+        this.battleType = BattleType.HUNTING;
+        this.status = BattleStatus.IN_PROGRESS;
+    }
+
+    // 보스 소환
+    public void startBossBattle(Monster boss) {
+        this.huntingGround = null;
+        this.monster = boss;
+        this.monsterCurrentHp = boss.getHp();
+        this.monsterMaxHp = boss.getHp();
+        this.monsterAttackCount = 0;
+        this.startedAt = LocalDateTime.now();
+        this.lastMonsterAttack = LocalDateTime.now();
+        this.battleType = BattleType.BOSS;
+        this.status = BattleStatus.IN_PROGRESS;
+    }
+
+    // 사냥터 몬스터 리스폰
+    public void respawnMonster() {
+        if (this.huntingGround == null) return;
+        this.monster = huntingGround.getMonster();
+        this.monsterCurrentHp = monster.getHp();
+        this.monsterMaxHp = monster.getHp();
+        this.monsterAttackCount = 0;
+        this.lastMonsterAttack = LocalDateTime.now();
     }
 
     public void damageMonster(int damage) {
@@ -90,27 +119,27 @@ public class DungeonProgress {
         return this.monsterCurrentHp <= 0;
     }
 
-    public void victory() {
-        this.status = ProgressStatus.VICTORY;
-    }
-
-    public void defeat() {
-        this.status = ProgressStatus.DEFEAT;
-    }
-
     public void reset() {
-        this.dungeon = null;
+        this.huntingGround = null;
         this.monster = null;
         this.monsterCurrentHp = 0;
         this.monsterMaxHp = 0;
         this.monsterAttackCount = 0;
         this.startedAt = null;
         this.lastMonsterAttack = null;
-        this.lastEnvironmentCalc = null;
-        this.status = ProgressStatus.IDLE;
+        this.battleType = BattleType.NONE;
+        this.status = BattleStatus.IDLE;
     }
 
     public boolean isInBattle() {
-        return this.status == ProgressStatus.IN_PROGRESS;
+        return this.status == BattleStatus.IN_PROGRESS;
+    }
+
+    public boolean isHunting() {
+        return this.battleType == BattleType.HUNTING && isInBattle();
+    }
+
+    public boolean isBossBattle() {
+        return this.battleType == BattleType.BOSS && isInBattle();
     }
 }

@@ -63,15 +63,15 @@ public class UserService {
 
     private int[] getEquipmentBonuses(Long userId) {
         List<UserItem> equipped = userItemRepository.findByUserIdAndEquippedTrue(userId);
-        int atkBonus = 0, defBonus = 0, crtBonus = 0, lukBonus = 0;
+        int atkBonus = 0, defBonus = 0, penBonus = 0, lukBonus = 0;
 
         for (UserItem ui : equipped) {
             atkBonus += ui.getItem().getAtkBonus();
             defBonus += ui.getItem().getDefBonus();
-            crtBonus += ui.getItem().getCrtBonus();
+            penBonus += ui.getItem().getPenBonus();
             lukBonus += ui.getItem().getLukBonus();
         }
 
-        return new int[]{atkBonus, defBonus, crtBonus, lukBonus};
+        return new int[]{atkBonus, defBonus, penBonus, lukBonus};
     }
 }

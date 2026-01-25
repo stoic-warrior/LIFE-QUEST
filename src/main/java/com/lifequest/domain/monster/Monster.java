@@ -30,7 +30,10 @@ public class Monster {
     private int hp;
 
     @Column(nullable = false)
-    private int attack;
+    private int atk;
+
+    @Column(nullable = false)
+    private int def; // 방어력 (%, 0~100)
 
     @Column(nullable = false)
     private int attackIntervalHours;
@@ -48,6 +51,13 @@ public class Monster {
     @Column(nullable = false)
     private double traitValue = 0;
 
+    // 보스는 BOSS 특성 + 추가 특성 가능
+    @Enumerated(EnumType.STRING)
+    private Trait secondTrait;
+
+    @Column(nullable = false)
+    private double secondTraitValue = 0;
+
     @Column(nullable = false)
     private double dropRate = 0.1;
 
@@ -55,12 +65,16 @@ public class Monster {
 
     private String imageUrl;
 
-    public static Monster create(String name, int hp, int attack, int attackIntervalHours,
+    @Column(nullable = false)
+    private boolean isBoss = false;
+
+    public static Monster create(String name, int hp, int atk, int def, int attackIntervalHours,
                                   int xpReward, int goldReward, Trait trait, double traitValue, double dropRate) {
         Monster monster = new Monster();
         monster.name = name;
         monster.hp = hp;
-        monster.attack = attack;
+        monster.atk = atk;
+        monster.def = def;
         monster.attackIntervalHours = attackIntervalHours;
         monster.xpReward = xpReward;
         monster.goldReward = goldReward;
@@ -68,5 +82,31 @@ public class Monster {
         monster.traitValue = traitValue;
         monster.dropRate = dropRate;
         return monster;
+    }
+
+    public static Monster createBoss(String name, int hp, int atk, int def, int attackIntervalHours,
+                                      int xpReward, int goldReward, 
+                                      Trait secondTrait, double secondTraitValue,
+                                      double dropRate, Long dropItemId) {
+        Monster monster = new Monster();
+        monster.name = name;
+        monster.hp = hp;
+        monster.atk = atk;
+        monster.def = def;
+        monster.attackIntervalHours = attackIntervalHours;
+        monster.xpReward = xpReward;
+        monster.goldReward = goldReward;
+        monster.trait = Trait.BOSS;
+        monster.traitValue = 0;
+        monster.secondTrait = secondTrait;
+        monster.secondTraitValue = secondTraitValue;
+        monster.dropRate = dropRate;
+        monster.dropItemId = dropItemId;
+        monster.isBoss = true;
+        return monster;
+    }
+
+    public int getAttack() {
+        return this.atk;
     }
 }
